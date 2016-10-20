@@ -1,0 +1,148 @@
+#!/bin/bash
+
+#set -x
+
+showusage=0
+pushdir=$HOME/.push
+ispop=0
+debug=0
+count=1
+popall=0
+list=0
+drop=0
+
+trace() {
+	if [ $debug -eq 1 ]
+	then echo $*
+	fi
+}
+
+cmd=$(basename $0)
+if [ $cmd == 'pop' ];then ispop=1;fi
+
+while getopts "hvn:adl" i
+do
+	case $i in
+		h)
+			showusage=1
+			;;
+		v)
+			debug=1
+			;;
+		n)
+			count=$OPTARG
+			;;
+		a)
+			popall=1
+			;;
+		d)
+			drop=1
+			;;
+		l)
+			list=1
+			;;
+	esac
+done
+
+shift $((OPTIND-1))
+
+if [ $showusage -eq 1 -o \( \( $cmd == 'push' -a $# -eq 0 \) -a $list -eq 0 \) ]
+then
+	if [ $ispop -eq 1 ]
+	then
+		echo 'pop [options] '
+		echo '-l:list stack'
+		echo '-n <count> :pop <count> times'
+		echo '-a:pop all'
+		echo '-d:drop(able to use with -n/-a'
+
+	else
+		echo 'push [options] <files>'
+		echo '-l:list stack'
+	fi
+	exit 1
+fi
+
+for i in $*
+do
+	if [ ! -e $i ]
+	then
+		echo $i does not exist. 1>&2
+		exit 1
+	fi
+done
+
+if [ ! -d $pushdir ]
+then
+	trace $pushdir does not exists. make it.
+	mkdir -p $pushdir
+fi
+
+if [ $list -eq 1 ]
+then
+	pushd $pushdir >/dev/null
+	chunks=$(ls|sort -nr)
+	depth=1
+	for i in $chunks
+	do
+		pushd $i >/dev/null
+		echo -$depth:
+		ls -l 
+		echo
+		popd >/dev/null
+		depth=$((depth+1))
+	done
+	popd >/dev/null
+	exit
+fi
+
+if [ $ispop -eq 0 ]
+then
+	pushd $pushdir >/dev/null
+	head=$(ls|sort -nr|head -n1)
+
+	if [ "$head" == "" ];then head=0;fi
+
+	trace HeadChunk=$head
+
+	next=$((head+1))
+
+	trace NextChunk=$next
+	mkdir $next
+	popd >/dev/null
+
+	trace mv $* $pushdir/$next
+	mv $* $pushdir/$next
+else
+	while [ $count -gt 0 -o $popall -eq 1 ]
+	do
+		pushd $pushdir >/dev/null
+		head=$(ls|sort -nr|head -n1)
+
+		if [ "$head" == "" ]
+		then
+			if [ ! $popall -eq 1 ]
+			then
+				echo file stack is empty. 1>&2
+				exit 1
+			else
+				exit 0
+			fi
+		fi
+
+		trace HeadChunk=$head
+		popd >/dev/null
+
+		if [ $drop -ne 1 ]
+		then
+			trace mv $pushdir/$head/* .
+			mv $pushdir/$head/* .
+		fi
+
+		trace rm -r $pushdir/$head
+		rm -r $pushdir/$head
+
+		count=$((count-1))
+	done
+fi
+
