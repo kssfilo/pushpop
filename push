@@ -87,7 +87,7 @@ then
 	do
 		pushd $i >/dev/null
 		echo -$depth:
-		ls -l 
+		ls -lA
 		echo
 		popd >/dev/null
 		depth=$((depth+1))
