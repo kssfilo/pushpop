@@ -3,7 +3,7 @@
 #set -x
 
 showusage=0
-pushdir=$HOME/.push
+pushdir=${PUSHDIR-$HOME/.push}
 ispop=0
 debug=0
 count=1
@@ -51,15 +51,22 @@ then
 	if [ $ispop -eq 1 ]
 	then
 		echo 'pop [options] '
+		echo
+		echo '=options'
 		echo '-l:list stack'
 		echo '-n <count> :pop <count> times'
 		echo '-a:pop all'
 		echo '-d:drop(able to use with -n/-a'
-
 	else
 		echo 'push [options] <files>'
+		echo
+		echo '=options'
 		echo '-l:list stack'
 	fi
+	echo
+	echo '=environments'
+	echo 'PUSHDIR:stack directory(default:~/.push) '
+
 	exit 1
 fi
 
