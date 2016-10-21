@@ -146,8 +146,8 @@ else
 			mv $pushdir/$head/* .
 		fi
 
-		trace rm -r $pushdir/$head
-		rm -r $pushdir/$head
+		trace rm -rf $pushdir/$head
+		rm -rf $pushdir/$head
 
 		count=$((count-1))
 	done
