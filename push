@@ -70,9 +70,9 @@ then
 	exit 1
 fi
 
-for i in $*
+for i
 do
-	if [ ! -e $i ]
+	if [ ! -e "$i" ]
 	then
 		echo $i does not exist. 1>&2
 		exit 1
@@ -118,8 +118,8 @@ then
 	mkdir $next
 	popd >/dev/null
 
-	trace mv $* $pushdir/$next
-	mv $* $pushdir/$next
+	trace mv "$@" $pushdir/$next
+	mv "$@" $pushdir/$next
 else
 	while [ $count -gt 0 -o $popall -eq 1 ]
 	do
