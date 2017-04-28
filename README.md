@@ -1,15 +1,15 @@
-#PushPop
+# PushPop
 
 bash scripts to push/pop files into/from temporary directory (~/.push)
 
-##Installation
+## Installation
 
 Copy files below to pathed directory.
 
 - push
 - pop (Symbolic link to push)
 
-##Usage
+## Usage
 
 ```bash
 #push files/directories
@@ -39,7 +39,7 @@ Copy files below to pathed directory.
 >pop -da
 ```
 
-##Options(push)
+## Options(push)
 
 ```
 push [options] <files>
@@ -47,7 +47,7 @@ push [options] <files>
 -l:list stack
 ```
 
-##Options(pop)
+## Options(pop)
 
 ```
 pop [options] 
@@ -58,6 +58,6 @@ pop [options]
 -d:drop(able to use with -n/-a
 ```
 
-#License
+# License
 
 MIT
